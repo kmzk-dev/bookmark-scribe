@@ -1,0 +1,4 @@
+﻿タイトル,URL,コメント
+"EXAMPLE.COM","https://example.com","ダミーURLであることを返す共有アドレス、サンプルページやマニュアル作成時に利用します"
+"Lorem Picsum","https://picsum.photos","ランダムなサンプル画像のURLを生成するAPIエンドポイントを提供。モックアップ作成用"
+"Happy Hues","https://www.happyhues.co/palettes/17","カラーパレットのtemplate集。CSSのカスタマイズ、カラー定義を作成する際に参照"
