@@ -1,8 +1,5 @@
 // list.js
 
-const CATEGORIES_STORAGE_KEY = 'bookmarkScribeCategories';
-const BOOKMARKS_STORAGE_KEY = 'scribeBookmarks';
-const DEFAULT_CATEGORY_ID = 'cat_uncategorized';
 
 // DOM要素の取得
 const bookmarkListDiv = document.getElementById('bookmark-list');
@@ -18,6 +15,9 @@ const editSummaryInput = document.getElementById('edit-summary-input');
 const saveEditBtn = document.getElementById('save-edit-btn');
 const closeEditBtn = document.getElementById('close-edit-btn');
 const editingUrl = document.getElementById('editing-url');
+const exportCsvBtn = document.getElementById('export-csv-btn');
+const importCsvBtn = document.getElementById('import-csv-btn');
+const importFileInput = document.getElementById('import-file-input'); 
 
 let allBookmarksData = []; // 全てのブックマークデータ（フィルタリング前）
 let categoryMap = {}; // IDと名前の対応マップ { 'cat_001': 'APIリファレンス', 'cat_uncategorized': '未分類', ... }
@@ -181,7 +181,7 @@ function filterAndRenderList() {
 
         // 2. 検索ワードフィルタ
         if (searchTerm) {
-            const categoryName = categoryMap[bookmark.categoryId] || 'カテゴリ不明';
+            const categoryName = categoryMap[bookmark.categoryId] || 'import';
             
             // 検索対象にカテゴリ名も追加
             const searchTargets = [
@@ -207,7 +207,7 @@ function filterAndRenderList() {
     // リストのレンダリング
     filteredBookmarks.forEach(bookmark => {
         // カテゴリ名を取得
-        const categoryName = categoryMap[bookmark.categoryId] || 'カテゴリ不明';
+        const categoryName = categoryMap[bookmark.categoryId] || 'import';
         const formattedDate = new Date(bookmark.lastUpdated).toLocaleString();
         
         // Materializeのカードパネルを使用
@@ -275,6 +275,79 @@ filterCategorySelect.addEventListener('change', filterAndRenderList);
 saveEditBtn.addEventListener('click', saveEdit);
 closeEditBtn.addEventListener('click', () => {
     editModal.style.display = 'none';
+});
+
+
+// 👈 CSVエクスポートボタンのイベントリスナーを追加
+exportCsvBtn.addEventListener('click', () => {
+    // 現在フィルタリングされているデータをエクスポート関数に渡す
+    // NOTE: filterAndRenderListでフィルタリングされたデータが欲しいが、
+    // ここではグローバルに保持されていないため、再フィルタリングまたは全データを渡す必要がある。
+    // 簡単のため、現在は全データを使用するか、またはフィルタリングロジックを再実行する。
+    
+    // ここでは、リスト表示に使われた最新のフィルタリング結果の配列を再取得
+    const bookmarksToExport = getCurrentFilteredBookmarks(); 
+    
+    exportToCsv(bookmarksToExport, categoryMap);
+});
+
+// 👈 getCurrentFilteredBookmarks関数を実装（list.js内に追加）
+/**
+ * 現在の検索/フィルタリング条件に合致するブックマークリストを返す
+ */
+function getCurrentFilteredBookmarks() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const selectedCategoryId = filterCategorySelect.value;
+    
+    return allBookmarksData.filter(bookmark => {
+        // 1. カテゴリフィルタ
+        if (selectedCategoryId && bookmark.categoryId !== selectedCategoryId) {
+            return false;
+        }
+
+        // 2. 検索ワードフィルタ
+        if (searchTerm) {
+            const categoryName = categoryMap[bookmark.categoryId] || 'import';
+            const searchTargets = [
+                bookmark.title, 
+                bookmark.url, 
+                bookmark.summary, 
+                categoryName 
+            ].join(' ').toLowerCase();
+
+            return searchTargets.includes(searchTerm);
+        }
+        return true;
+    });
+}
+
+//👈 CSVインポートボタンのイベントリスナーを追加
+importCsvBtn.addEventListener('click', () => {
+    // 隠されたファイル選択ダイアログを表示
+    importFileInput.click();
+});
+
+// 👈 ファイル選択後のイベントリスナー
+importFileInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    
+    // ファイル読み込みが完了したら実行
+    reader.onload = async (e) => {
+        const csvText = e.target.result;
+        try {
+            // importCsvData関数（csv_import.js）を呼び出す
+            await importCsvData(csvText, categoryMap);
+        } catch (error) {
+            console.error('CSVインポートエラー:', error);
+            alert('CSVファイルの読み込み中にエラーが発生しました。コンソールを確認してください。');
+        }
+    };
+
+    // ファイルをテキストとして読み込む
+    reader.readAsText(file);
 });
 
 // 画面ロード時に実行

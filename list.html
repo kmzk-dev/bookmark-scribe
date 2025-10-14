@@ -40,9 +40,20 @@
                     <select id="filter-category-select">
                         <option value="">全てのカテゴリ</option>
                         </select>
-                    <label>カテゴリでフィルタ</label>
+                    <label>今あるカテゴリでフィルタ</label>
                 </div>
             </div>
+        </div>
+        <div class="row right-align">
+            
+            <input type="file" id="import-file-input" accept=".csv" style="display: none;">
+            <button id="import-csv-btn" class="waves-effect waves-light btn-small green darken-1" style="margin-right: 10px;">
+                <i class="material-icons left">cloud_upload</i> CSVインポート
+            </button>
+
+            <button id="export-csv-btn" class="waves-effect waves-light btn-small light-blue darken-1">
+                <i class="material-icons left">cloud_download</i> CSVエクスポート
+            </button>
         </div>
 
         <div id="bookmark-list" class="row">
@@ -80,6 +91,9 @@
     </div>
 
     <script src="materialize.min.js"></script>
+    <script src="constants.js"></script> 
+    <script src="csv.js"></script>
+    <script src="csv_import.js"></script>
     <script src="list.js"></script>
 </body>
 </html>

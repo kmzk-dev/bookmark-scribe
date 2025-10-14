@@ -1,8 +1,4 @@
 // options.js
-
-// キーは、カテゴリの配列を保存するために使用します
-const CATEGORIES_STORAGE_KEY = 'bookmarkScribeCategories';
-
 // DOM要素の取得
 const categoryList = document.getElementById('category-list');
 const newCategoryInput = document.getElementById('new-category-input');
