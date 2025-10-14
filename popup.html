@@ -3,26 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Bookmark Scribe - Add</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="statics/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         body { width: 400px; padding: 10px; }
         .category-row { 
             display: flex; 
-            align-items: center;/* ボタンとセレクトフィールドの高さを合わせる */
+            align-items: center;
             margin-bottom: 20px; 
         }
         .category-select-field { 
-            flex-grow: 1; /* 選択フィールドが利用可能なスペースを埋める */
+            flex-grow: 1;
             margin-right: 10px; 
-            margin-bottom: 0 !important; /* Materializeのデフォルトmarginを上書き */
+            margin-bottom: 0 !important;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h5 class="center-align" style="margin-bottom: 20px;">Add Bookmark</h5>
-       
         <div class="input-field" style="margin-top: 5px;">
             <input id="tab-title" type="text">
             <label for="tab-title">Title</label>
@@ -51,8 +50,8 @@
         </p>
     </div>
 
-    <script src="materialize.min.js"></script>
-    <script src="constants.js"></script>
-    <script src="popup.js"></script>
+    <script src="statics/js/materialize.min.js"></script>
+    <script src="statics/js/constants.js"></script>
+    <script src="statics/js/popup.js"></script>
 </body>
 </html>
