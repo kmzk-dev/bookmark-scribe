@@ -1,8 +1,5 @@
 // popup.js
 
-const CATEGORIES_STORAGE_KEY = 'bookmarkScribeCategories';
-const BOOKMARKS_STORAGE_KEY = 'scribeBookmarks';
-const DEFAULT_CATEGORY_ID = 'cat_uncategorized';
 
 // DOM要素の取得
 const tabTitleEl = document.getElementById('tab-title'); // 👈 input要素になった
