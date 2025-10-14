@@ -30,30 +30,54 @@ async function loadAndDisplayCategories() {
     // カテゴリは {id: 'cat_...', name: '名前'} の配列
     const categories = result[CATEGORIES_STORAGE_KEY] || [];
 
+    // リストコンテナにコレクションクラスを追加
+    categoryList.classList.add('collection');
+
     if (categories.length === 0) {
-        categoryList.innerHTML = '<li>現在、カテゴリはありません。</li>';
+        // コレクションアイテムとしてメッセージを表示
+        const li = document.createElement('li');
+        li.classList.add('collection-item');
+        li.textContent = '現在、カテゴリはありません。';
+        categoryList.appendChild(li);
         return;
     }
 
     // 各カテゴリをリストアイテムとして表示
     categories.forEach(category => {
         const li = document.createElement('li');
-        li.textContent = category.name;
+        li.classList.add('collection-item', 'category-item'); // カスタムクラスとコレクションアイテムクラス
+        
+        // Flexboxを使用して内容を横並びにするためのコンテナ
+        li.style.display = 'flex';
+        li.style.justifyContent = 'space-between';
+        li.style.alignItems = 'center';
+        
+        // カテゴリ名
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = category.name;
+
+        // ボタンコンテナ
+        const buttonDiv = document.createElement('div');
         
         // 編集ボタンの作成
         const editBtn = document.createElement('button');
-        editBtn.textContent = '編集';
-        editBtn.style.marginLeft = '10px';
+        editBtn.innerHTML = '<i class="material-icons">edit</i>';
+        editBtn.classList.add('waves-effect', 'waves-light', 'btn-small');
+        editBtn.style.marginRight = '0px'; // ボタン間の余白
         editBtn.onclick = () => openEditModal(category.id, category.name);
 
         // 削除ボタンの作成
         const deleteBtn = document.createElement('button');
-        deleteBtn.textContent = '削除';
-        deleteBtn.style.marginLeft = '5px';
+        deleteBtn.innerHTML = '<i class="material-icons">delete</i>';
+        deleteBtn.classList.add('waves-effect', 'waves-light', 'btn-small', 'red', 'lighten-1');
         deleteBtn.onclick = () => deleteCategory(category.id);
         
-        li.appendChild(editBtn);
-        li.appendChild(deleteBtn);
+        // 要素を組み込む
+        buttonDiv.appendChild(editBtn);
+        buttonDiv.appendChild(deleteBtn);
+        
+        li.appendChild(nameSpan);
+        li.appendChild(buttonDiv);
         categoryList.appendChild(li);
     });
 }
@@ -130,7 +154,7 @@ async function deleteCategory(idToDelete) {
  */
 function openEditModal(id, name) {
     editingCategoryId = id;
-    editCategoryInput.value = name;
+    editCategoryInput.value = "";
     editModal.style.display = 'block';
 }
 

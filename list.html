@@ -3,47 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <title>Bookmark Scribe - List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .bookmark-item h3 { font-size: 1.5rem; margin-top: 0; }
+        .bookmark-item p { margin: 5px 0; }
+        /* モーダルを中央に表示 */
+        #edit-modal { 
+            display: none; 
+            padding: 30px; 
+            background: white; 
+            box-shadow: 0 5px 15px rgba(0,0,0,.5);
+            z-index: 1000;
+            position: fixed;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%; 
+            max-width: 600px;
+        }
+    </style>
 </head>
 <body>
-    <h1>ブックマーク一覧と検索</h1>
-    
-    <input type="text" id="search-input" placeholder="タイトル、URL、サマリー、カテゴリで検索">
-    <select id="filter-category-select">
-        <option value="">全てのカテゴリ</option>
-        </select>
+    <div class="container">
+        <h4 class="center-align">Bookmark List</h4>
+        
+        <div class="row">
+            <div class="col s8">
+                <div class="input-field">
+                    <input type="text" id="search-input">
+                    <label for="search-input">タイトル、URL、サマリー、カテゴリで検索</label>
+                </div>
+            </div>
+            <div class="col s4">
+                <div class="input-field">
+                    <select id="filter-category-select">
+                        <option value="">全てのカテゴリ</option>
+                        </select>
+                    <label>カテゴリでフィルタ</label>
+                </div>
+            </div>
+        </div>
 
-    <div id="bookmark-list">
-        <p>リストの読み込み中です...</p>
+        <div id="bookmark-list" class="row">
+            <p class="center-align">リストの読み込み中です...</p>
+        </div>
+
+        <div id="edit-modal">
+            <h5>ブックマークの編集</h5>
+            
+            <div class="input-field">
+                <input type="text" id="edit-title">
+                <label for="edit-title">title</label>
+            </div>
+            
+            <div class="input-field">
+                <input type="text" id="edit-url" disabled>
+            </div>
+            
+            <div class="input-field">
+                <select id="edit-category-select">
+                    </select>
+                <label>Label</label>
+            </div>
+            
+            <div class="input-field">
+                <textarea id="edit-summary-input" class="materialize-textarea"></textarea>
+                <label for="edit-summary-input">Comment</label>
+            </div>
+            <div class="right-align">
+            <button id="save-edit-btn" class="waves-effect waves-light btn"><i class="material-icons right">save</i>SAVE</button>
+            <button id="close-edit-btn" class="waves-effect waves-light btn red lighten-1"><i class="material-icons right">close</i>キャンセル</button>
+            </div>
+            <input type="hidden" id="editing-url"> 
+        </div>
     </div>
 
-    <div id="edit-modal" style="display: none; border: 2px solid #000; padding: 20px; position: fixed; top: 10%; left: 50%; transform: translateX(-50%); background: #fff; z-index: 100;">
-        <h2>ブックマークの編集</h2>
-        
-        <label for="edit-title">タイトル:</label>
-        <input type="text" id="edit-title"><br><br>
-        
-        <label for="edit-url">URL:</label>
-        <input type="text" id="edit-url" disabled><br><br>
-        
-        <label for="edit-category-select">カテゴリ:</label>
-        <select id="edit-category-select">
-            </select><br><br>
-        
-        <label for="edit-summary-input">サマリー:</label>
-        <textarea id="edit-summary-input" rows="5"></textarea><br><br>
-        
-        <button id="save-edit-btn">変更を保存</button>
-        <button id="close-edit-btn">キャンセル</button>
-        
-        <input type="hidden" id="editing-url"> 
-    </div>
-
-
-
-
-
-
-
+    <script src="materialize.min.js"></script>
     <script src="list.js"></script>
 </body>
 </html>

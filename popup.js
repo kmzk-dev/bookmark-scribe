@@ -2,34 +2,33 @@
 
 const CATEGORIES_STORAGE_KEY = 'bookmarkScribeCategories';
 const BOOKMARKS_STORAGE_KEY = 'scribeBookmarks';
-const DEFAULT_CATEGORY_ID = 'cat_uncategorized'; // 未分類のID
+const DEFAULT_CATEGORY_ID = 'cat_uncategorized';
 
 // DOM要素の取得
-const tabTitleEl = document.getElementById('tab-title');
-const tabUrlEl = document.getElementById('tab-url');
+const tabTitleEl = document.getElementById('tab-title'); // 👈 input要素になった
+const tabUrlEl = document.getElementById('tab-url');     // 👈 input要素になった
 const categorySelect = document.getElementById('category-select');
 const summaryInput = document.getElementById('summary-input');
 const saveButton = document.getElementById('save-btn');
-
-let currentTab = {}; // 現在のタブ情報を保持するオブジェクト
+const addCategoryButton = document.getElementById('add-category-btn'); // 新規カテゴリボタン
+// let currentTab = {}; // 削除: グローバル変数として保持せず、DOMから直接読み取る
 
 // ==========================================================
 // 1. 初期化
 // ==========================================================
 
 /**
- * 現在のタブ情報を取得し、UIに表示する
+ * 現在のタブ情報を取得し、UI（Inputフィールド）に設定する
  */
 async function loadCurrentTab() {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
-    currentTab = { 
-        title: tab.title, 
-        url: tab.url 
-    };
+    // 👈 取得した値をInputフィールドに設定
+    tabTitleEl.value = tab.title;
+    tabUrlEl.value = tab.url;
 
-    tabTitleEl.textContent = currentTab.title;
-    tabUrlEl.textContent = currentTab.url;
+    // Materializeのinputラベルをアクティブにする
+    M.updateTextFields();
 }
 
 /**
@@ -54,6 +53,9 @@ async function loadCategoriesToSelect() {
         // カテゴリが設定されていない場合のメッセージ
         categorySelect.innerHTML += '<option disabled>設定画面でカテゴリを追加してください</option>';
     }
+    
+    // MaterializeのSelect要素を初期化
+    M.FormSelect.init(categorySelect);
 }
 
 // ==========================================================
@@ -64,25 +66,26 @@ async function loadCategoriesToSelect() {
  * ブックマークデータ（サマリーとカテゴリ）をストレージに保存する
  */
 async function saveBookmark() {
-    // 選択されたのはカテゴリ名ではなくカテゴリID
+    // 👈 Inputフィールドから値を取得
+    const title = tabTitleEl.value.trim();
+    const url = tabUrlEl.value.trim();
     const categoryId = categorySelect.value || DEFAULT_CATEGORY_ID; 
     const summary = summaryInput.value.trim();
-    const url = currentTab.url;
 
-    if (!url || !summary) {
-        alert('URLとサマリーの全てを入力してください。');
+    if (!url || !title || !summary) {
+        alert('タイトル、URL、サマリーの全てを入力してください。');
         return;
     }
 
     const result = await chrome.storage.local.get(BOOKMARKS_STORAGE_KEY);
     const allBookmarks = result[BOOKMARKS_STORAGE_KEY] || {};
 
-    // 新しいブックマークデータを作成
+    // URLをキーとしてデータを追加・上書き
     const newBookmarkEntry = {
-        title: currentTab.title,
-        url: url,
+        title: title, // 👈 編集されたタイトル
+        url: url,     // 👈 編集されたURL (キーとなる)
         summary: summary,
-        categoryId: categoryId, // 👈 IDを保存
+        categoryId: categoryId,
         lastUpdated: new Date().toISOString()
     };
     
@@ -94,20 +97,16 @@ async function saveBookmark() {
     window.close();
 }
 
-
 // ==========================================================
 // 3. イベントリスナーと初期化
 // ==========================================================
 
 saveButton.addEventListener('click', saveBookmark);
-// 👈 新規カテゴリボタンの処理を追加
-const addCategoryButton = document.getElementById('add-category-btn'); 
 
 addCategoryButton.addEventListener('click', () => {
     // options.htmlを新しいタブで開く
     chrome.tabs.create({ url: 'options.html' }); 
 });
-
 
 loadCurrentTab();
 loadCategoriesToSelect();

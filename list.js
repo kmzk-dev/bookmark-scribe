@@ -4,7 +4,7 @@ const CATEGORIES_STORAGE_KEY = 'bookmarkScribeCategories';
 const BOOKMARKS_STORAGE_KEY = 'scribeBookmarks';
 const DEFAULT_CATEGORY_ID = 'cat_uncategorized';
 
-// DOM要素の取得 (一部options.htmlに追加が必要です)
+// DOM要素の取得
 const bookmarkListDiv = document.getElementById('bookmark-list');
 const searchInput = document.getElementById('search-input');
 const filterCategorySelect = document.getElementById('filter-category-select');
@@ -20,10 +20,10 @@ const closeEditBtn = document.getElementById('close-edit-btn');
 const editingUrl = document.getElementById('editing-url');
 
 let allBookmarksData = []; // 全てのブックマークデータ（フィルタリング前）
-let categoryMap = {}; // IDと名前の対応マップ { 'cat_001': 'APIリファレンス', ... }
+let categoryMap = {}; // IDと名前の対応マップ { 'cat_001': 'APIリファレンス', 'cat_uncategorized': '未分類', ... }
 
 // ==========================================================
-// 1. 初期化: カテゴリの読み込み
+// 1. 初期化: カテゴリの読み込みとマップ作成
 // ==========================================================
 
 /**
@@ -41,10 +41,18 @@ async function loadCategoriesAndMap() {
 
     // 2. フィルタ用ドロップダウンの設定
     filterCategorySelect.innerHTML = '<option value="">全てのカテゴリ</option>';
+    
+    // 👈 修正点: 未分類カテゴリのオプションを明示的に追加
+    const uncategorizedOption = document.createElement('option');
+    uncategorizedOption.value = DEFAULT_CATEGORY_ID; // cat_uncategorized を値として設定
+    uncategorizedOption.textContent = categoryMap[DEFAULT_CATEGORY_ID]; // '未分類'
+    filterCategorySelect.appendChild(uncategorizedOption);
+
     editCategorySelect.innerHTML = `<option value="${DEFAULT_CATEGORY_ID}">-- 未分類 --</option>`;
 
+    // 既存カテゴリを追加
     for (const id in categoryMap) {
-        if (id === DEFAULT_CATEGORY_ID) continue; // 未分類は最初に追加済み
+        if (id === DEFAULT_CATEGORY_ID) continue; // 未分類は既に追加済みなのでスキップ
 
         // フィルタ用
         const filterOption = document.createElement('option');
@@ -58,6 +66,10 @@ async function loadCategoriesAndMap() {
         editOption.textContent = categoryMap[id];
         editCategorySelect.appendChild(editOption);
     }
+    
+    // MaterializeのSelect要素を初期化/更新
+    M.FormSelect.init(filterCategorySelect);
+    M.FormSelect.init(editCategorySelect);
 }
 
 // ==========================================================
@@ -84,12 +96,21 @@ async function deleteBookmark(url) {
  * 編集モーダルを開き、データをセットする
  */
 function openEditModal(bookmark) {
+    // 既存のブックマークデータをフォームにセット
     editTitle.value = bookmark.title;
     editUrl.value = bookmark.url;
+    
     // カテゴリIDを設定
     editCategorySelect.value = bookmark.categoryId || DEFAULT_CATEGORY_ID; 
+    
+    // MaterializeのSelectを更新
+    M.FormSelect.init(editCategorySelect);
+
     editSummaryInput.value = bookmark.summary;
     editingUrl.value = bookmark.url;
+
+    // input要素のラベルをアクティブにする (Materializeの仕様対応)
+    M.updateTextFields();
 
     editModal.style.display = 'block';
 }
@@ -100,7 +121,7 @@ function openEditModal(bookmark) {
 async function saveEdit() {
     const url = editingUrl.value;
     const title = editTitle.value.trim();
-    const categoryId = editCategorySelect.value; // 👈 IDを取得
+    const categoryId = editCategorySelect.value;
     const summary = editSummaryInput.value.trim();
 
     if (!title || !categoryId || !summary) {
@@ -118,14 +139,14 @@ async function saveEdit() {
 
     // データを更新
     allBookmarks[url].title = title;
-    allBookmarks[url].categoryId = categoryId; // 👈 IDを保存
+    allBookmarks[url].categoryId = categoryId;
     allBookmarks[url].summary = summary;
     allBookmarks[url].lastUpdated = new Date().toISOString();
 
     await chrome.storage.local.set({ [BOOKMARKS_STORAGE_KEY]: allBookmarks });
 
     editModal.style.display = 'none';
-    loadAndDisplayBookmarks();
+    loadAndDisplayBookmarks(); // リストを再読み込み
 }
 
 // ==========================================================
@@ -139,6 +160,7 @@ async function loadAndDisplayBookmarks() {
     const result = await chrome.storage.local.get(BOOKMARKS_STORAGE_KEY);
     allBookmarksData = Object.values(result[BOOKMARKS_STORAGE_KEY] || {});
 
+    // 最終更新日で新しい順にソート
     allBookmarksData.sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated));
 
     filterAndRenderList();
@@ -178,40 +200,64 @@ function filterAndRenderList() {
     bookmarkListDiv.innerHTML = ''; 
 
     if (filteredBookmarks.length === 0) {
-        bookmarkListDiv.innerHTML = '<p>該当するブックマークは見つかりませんでした。</p>';
+        bookmarkListDiv.innerHTML = '<p class="center-align">該当するブックマークは見つかりませんでした。</p>';
         return;
     }
 
     // リストのレンダリング
     filteredBookmarks.forEach(bookmark => {
+        // カテゴリ名を取得
+        const categoryName = categoryMap[bookmark.categoryId] || 'カテゴリ不明';
+        const formattedDate = new Date(bookmark.lastUpdated).toLocaleString();
+        
+        // Materializeのカードパネルを使用
         const itemDiv = document.createElement('div');
-        itemDiv.style.border = '1px solid #ccc';
-        itemDiv.style.marginBottom = '10px';
-        itemDiv.style.padding = '10px';
-        
-        // カテゴリ名を表示
-        const categoryName = categoryMap[bookmark.categoryId] || 'カテゴリ不明 (ID: ' + bookmark.categoryId + ')';
-        
-        itemDiv.innerHTML += `
-            <h3><a href="${bookmark.url}" target="_blank">${bookmark.title}</a></h3>
-            <p><strong>カテゴリ:</strong> ${categoryName}</p>
-            <p><strong>サマリー:</strong> ${bookmark.summary}</p>
-            <small><strong>URL:</strong> ${bookmark.url}</small><br>
-            <small><strong>最終更新日:</strong> ${new Date(bookmark.lastUpdated).toLocaleString()}</small>
+        itemDiv.classList.add('card-panel', 'grey', 'lighten-5', 'z-depth-1', 'bookmark-item');
+
+        // Materializeのグリッドで情報を整理
+        itemDiv.innerHTML = `
+            <div class="row" style="margin-bottom: 5px;">
+                <div class="col s5">
+                    <h5 style="margin: 0; font-size: 1.2rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        <a href="${bookmark.url}" target="_blank" class="teal-text text-darken-2">${bookmark.title}</a>
+                    </h5>
+                </div>
+                
+                <div class="col s2 center-align">
+                    <span class="chip blue-grey lighten-4">${categoryName}</span>
+                </div>
+
+                <div class="col s3 right-align grey-text text-darken-1" style="font-size: 0.8rem; padding-top: 5px;">
+                    <i class="tiny material-icons">access_time</i> ${formattedDate}
+                </div>
+                
+                <div class="col s2 right-align" id="actions-${bookmark.url.replace(/[^a-zA-Z0-9]/g, '-')}" style="padding-top: 0;">
+                    </div>
+            </div>
+            
+            <div class="row" style="margin-bottom: 0;">
+                <div class="col s12 grey-text text-darken-3" style="font-size: 0.9rem; padding-top: 0;">
+                    ${bookmark.summary}
+                </div>
+            </div>
         `;
 
-        // ボタンのイベント設定
+        // 削除・編集ボタンをJSで作成し、アクションコンテナに追加
+        const actionDiv = itemDiv.querySelector(`#actions-${bookmark.url.replace(/[^a-zA-Z0-9]/g, '-')}`);
+
         const editBtn = document.createElement('button');
-        editBtn.textContent = '編集';
-        editBtn.style.marginRight = '10px';
+        editBtn.innerHTML = '<i class="material-icons">edit</i>';
+        editBtn.classList.add('waves-effect', 'waves-light', 'btn-small');
+        editBtn.style.marginRight = '5px';
         editBtn.onclick = () => openEditModal(bookmark);
-        
+
         const deleteBtn = document.createElement('button');
-        deleteBtn.textContent = '削除';
+        deleteBtn.innerHTML = '<i class="material-icons">delete</i>';
+        deleteBtn.classList.add('waves-effect', 'waves-light', 'btn-small', 'red', 'lighten-1');
         deleteBtn.onclick = () => deleteBookmark(bookmark.url);
 
-        itemDiv.appendChild(editBtn);
-        itemDiv.appendChild(deleteBtn);
+        actionDiv.appendChild(editBtn);
+        actionDiv.appendChild(deleteBtn);
         
         bookmarkListDiv.appendChild(itemDiv);
     });
@@ -221,13 +267,15 @@ function filterAndRenderList() {
 // 4. イベントリスナーと初期化
 // ==========================================================
 
+// 検索ボックスとフィルタの変更時にリストを更新
 searchInput.addEventListener('input', filterAndRenderList);
 filterCategorySelect.addEventListener('change', filterAndRenderList);
 
+// 編集モーダルのボタンイベント
 saveEditBtn.addEventListener('click', saveEdit);
 closeEditBtn.addEventListener('click', () => {
     editModal.style.display = 'none';
 });
 
 // 画面ロード時に実行
-loadAndDisplayBookmarks();
+document.addEventListener('DOMContentLoaded', loadAndDisplayBookmarks);

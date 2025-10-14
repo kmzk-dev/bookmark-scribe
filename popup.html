@@ -3,28 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <title>Bookmark Scribe - Add</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body { width: 400px; padding: 10px; }
+        .category-row { 
+            display: flex; 
+            align-items: center;/* ボタンとセレクトフィールドの高さを合わせる */
+            margin-bottom: 20px; 
+        }
+        .category-select-field { 
+            flex-grow: 1; /* 選択フィールドが利用可能なスペースを埋める */
+            margin-right: 10px; 
+            margin-bottom: 0 !important; /* Materializeのデフォルトmarginを上書き */
+        }
+    </style>
 </head>
 <body>
-    <h1>ブックマークに追加</h1>
-    <p>現在のページ:</p>
-    <div id="current-info">
-        <strong id="tab-title">...</strong><br>
-        <small id="tab-url">...</small>
+    <div class="container">
+        <h5 class="center-align" style="margin-bottom: 20px;">Add Bookmark</h5>
+       
+        <div class="input-field" style="margin-top: 5px;">
+            <input id="tab-title" type="text">
+            <label for="tab-title">Title</label>
+        </div>
+        <div>
+            <input id="tab-url" type="hidden">
+        </div>
+
+        <div class="category-row">
+            <div class="input-field category-select-field">
+                <select id="category-select"></select>
+                <label for="category-select">Category</label> 
+            </div>
+            <a id="add-category-btn" class="waves-effect waves-light btn-small teal darken-1"><i class="material-icons left">add</i>add</a>
+        </div>
+
+        <div class="input-field">
+            <textarea id="summary-input" class="materialize-textarea validate" rows="2" placeholder="Explain a purpose to add this page"></textarea>
+            <label for="summary-input">Comment</label>
+        </div>
+        
+        <button id="save-btn" class="waves-effect waves-light btn" style="width: 100%;"><i class="material-icons">save</i></button>
+
+        <p class="center-align" style="margin-top: 20px;">
+            <a href="list.html" target="_blank" class="blue-text text-darken-2">Open List-View</a>
+        </p>
     </div>
 
-    <label for="category-select">カテゴリ:</label>
-    <select id="category-select">
-        </select>
-    <button id="add-category-btn">新規カテゴリ</button>
-    
-    <label for="summary-input">サマリー:</label>
-    <textarea id="summary-input" rows="3" placeholder="このブックマークの目的を記述..."></textarea>
-    
-    <button id="save-btn">保存</button>
-
-    <hr>
-    <p><a href="list.html" target="_blank">リスト管理画面へ</a></p>
-
+    <script src="materialize.min.js"></script>
     <script src="popup.js"></script>
 </body>
 </html>
