@@ -3,30 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <title>Bookmark Scribe - Settings</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .container { padding-bottom: 50px; }
+        .category-item { display: flex; align-items: center; justify-content: space-between; padding: 5px 0; border-bottom: 1px dotted #ccc; }
+        .category-item button { margin-left: 8px; }
+        /* モーダルを中央に表示 */
+        #edit-modal { 
+            display: none; 
+            padding: 20px; 
+            background: white; 
+            box-shadow: 0 5px 15px rgba(0,0,0,.5);
+            z-index: 1000;
+            position: fixed;
+            top: 25%;
+            left: 50%;
+            transform: translate(-50%, -25%);
+            width: 90%; 
+            max-width: 400px;
+        }
+    </style>
 </head>
 <body>
-    <h1>設定 (カテゴリ管理)</h1>
-    
-    <h2>カテゴリの追加</h2>
-    <input type="text" id="new-category-input" placeholder="新しいカテゴリ名">
-    <button id="add-category-btn">追加</button>
-
-    <hr>
-
-    <h2>既存カテゴリ</h2>
-    <ul id="category-list">
-        <li>カテゴリを読み込み中です...</li>
-    </ul>
-
-    <div id="edit-modal" style="display: none; border: 2px solid #000; padding: 20px; position: fixed; top: 10%; left: 50%; transform: translateX(-50%); background: #fff; z-index: 100;">
-        <h2>カテゴリ名の編集</h2>
+    <div class="container">
+        <h4 class="center-align">Setting</h4>
         
-        <label for="edit-category-input">新しいカテゴリ名:</label>
-        <input type="text" id="edit-category-input"><br><br>
-        
-        <button id="save-category-edit-btn">変更を保存</button>
-        <button id="close-category-edit-btn">キャンセル</button>
+        <div class="row">
+            <div class="col s12">
+                <h5>Label</h5>
+                <div class="input-field">
+                    <input type="text" id="new-category-input" class="validate">
+                    <label for="new-category-input">New Label Name</label>
+                </div>
+                <button id="add-category-btn" class="waves-effect waves-light btn right"><i class="material-icons left">add</i>add</button>
+                <div style="clear: both;"></div>
+        </div>
+        </div>
+
+        <div class="row">
+            <div class="col s12">
+                <h5>Label List</h5>
+                <ul id="category-list" class="collection">
+                    <li class="collection-item">カテゴリを読み込み中です...</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="edit-modal">
+            <h6>Edit Label</h6>
+            <div class="input-field">
+                <input type="text" id="edit-category-input" class="validate">
+                <label for="edit-category-input">New Label Name</label>
+            </div>
+            <button id="save-category-edit-btn" class="waves-effect waves-light btn">Edit</button>
+            <button id="close-category-edit-btn" class="waves-effect waves-light btn red lighten-1">Cancel</button>
+        </div>
     </div>
+
+    <script src="materialize.min.js"></script>
     <script src="options.js"></script>
 </body>
 </html>
