@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Bookmark Scribe - Add</title>
+</head>
+<body>
+    <h1>ブックマークに追加</h1>
+    <p>現在のページ:</p>
+    <div id="current-info">
+        <strong id="tab-title">...</strong><br>
+        <small id="tab-url">...</small>
+    </div>
+
+    <label for="category-select">カテゴリ:</label>
+    <select id="category-select">
+        </select>
+    <button id="add-category-btn">新規カテゴリ</button>
+    
+    <label for="summary-input">サマリー:</label>
+    <textarea id="summary-input" rows="3" placeholder="このブックマークの目的を記述..."></textarea>
+    
+    <button id="save-btn">保存</button>
+
+    <hr>
+    <p><a href="list.html" target="_blank">リスト管理画面へ</a></p>
+
+    <script src="popup.js"></script>
+</body>
+</html>

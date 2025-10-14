@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Bookmark Scribe - List</title>
+</head>
+<body>
+    <h1>ブックマーク一覧と検索</h1>
+    
+    <input type="text" id="search-input" placeholder="タイトル、URL、サマリー、カテゴリで検索">
+    <select id="filter-category-select">
+        <option value="">全てのカテゴリ</option>
+        </select>
+
+    <div id="bookmark-list">
+        <p>リストの読み込み中です...</p>
+    </div>
+
+    <div id="edit-modal" style="display: none; border: 2px solid #000; padding: 20px; position: fixed; top: 10%; left: 50%; transform: translateX(-50%); background: #fff; z-index: 100;">
+        <h2>ブックマークの編集</h2>
+        
+        <label for="edit-title">タイトル:</label>
+        <input type="text" id="edit-title"><br><br>
+        
+        <label for="edit-url">URL:</label>
+        <input type="text" id="edit-url" disabled><br><br>
+        
+        <label for="edit-category-select">カテゴリ:</label>
+        <select id="edit-category-select">
+            </select><br><br>
+        
+        <label for="edit-summary-input">サマリー:</label>
+        <textarea id="edit-summary-input" rows="5"></textarea><br><br>
+        
+        <button id="save-edit-btn">変更を保存</button>
+        <button id="close-edit-btn">キャンセル</button>
+        
+        <input type="hidden" id="editing-url"> 
+    </div>
+
+
+
+
+
+
+
+    <script src="list.js"></script>
+</body>
+</html>

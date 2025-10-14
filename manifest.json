@@ -1,0 +1,15 @@
+{
+    "manifest_version": 3,
+    "name": "Bookmark Scribe",
+    "version": "1.0",
+    "description": "ブックマークにサマリーとカテゴリを追加して管理",
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "permissions": [
+        "bookmarks",        
+        "storage",          
+        "activeTab"         
+    ],
+    "options_page": "options.html"
+}
