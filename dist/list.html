@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Bookmark Scribe - List</title>
+    <link rel="stylesheet" href="statics/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .bookmark-item h3 { font-size: 1.5rem; margin-top: 0; }
+        .bookmark-item p { margin: 5px 0; }
+        #edit-modal { 
+            display: none; 
+            padding: 30px; 
+            background: white; 
+            box-shadow: 0 5px 15px rgba(0,0,0,.5);
+            z-index: 1000;
+            position: fixed;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%; 
+            max-width: 600px;
+        }
+        #import-preview-modal {
+            display: none; 
+            padding: 30px; 
+            background: white; 
+            box-shadow: 0 5px 15px rgba(0,0,0,.5);
+            z-index: 1001;
+            position: fixed;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 800px;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+        .preview-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h4 class="center-align">Bookmark Scribe - List</h4>
+        
+        <div class="row">
+            <div class="col s8">
+                <div class="input-field">
+                    <input type="text" id="search-input">
+                    <label for="search-input">Search by title, summary, or label</label>
+                </div>
+            </div>
+            <div class="col s4">
+                <div class="input-field">
+                    <select id="filter-category-select">
+                        <option value="">All label</option>
+                        </select>
+                    <label>Filter by label</label>
+                </div>
+            </div>
+        </div>
+        <div class="row right-align">
+            <a href="options.html" target="_blank" class="waves-effect waves-light btn-small grey" style="margin-right: 10px;">
+                <i class="material-icons left">settings</i>Settings
+            </a>
+            
+            <input type="file" id="import-file-input" accept=".csv" style="display: none;">
+            <button id="import-csv-btn" class="waves-effect waves-light btn-small green darken-1" style="margin-right: 10px;">
+                <i class="material-icons left">cloud_upload</i>Import CSV
+            </button>
+
+            <button id="export-csv-btn" class="waves-effect waves-light btn-small light-blue darken-1">
+                <i class="material-icons left">cloud_download</i>Export CSV
+            </button>
+        </div>
+
+        <div id="bookmark-list" class="row">
+            <p class="center-align">Loading list...</p>
+        </div>
+
+        <div id="edit-modal">
+            <h5>Edit Bookmark</h5>
+            
+            <div class="input-field">
+                <input type="text" id="edit-title">
+                <label for="edit-title">title</label>
+            </div>
+            
+            <div class="input-field">
+                <input type="text" id="edit-url" disabled>
+            </div>
+            
+            <div class="input-field">
+                <select id="edit-category-select">
+                    </select>
+                <label>Label</label>
+            </div>
+            
+            <div class="input-field">
+                <textarea id="edit-summary-input" class="materialize-textarea"></textarea>
+                <label for="edit-summary-input">Comment</label>
+            </div>
+            <div class="right-align">
+            <button id="save-edit-btn" class="waves-effect waves-light btn"><i class="material-icons right">save</i>Edit</button>
+            <button id="close-edit-btn" class="waves-effect waves-light btn red lighten-1"><i class="material-icons right">close</i>Cancel</button>
+            </div>
+            <input type="hidden" id="editing-url"> 
+        </div>
+
+        <div id="import-preview-modal">
+            <h5>Confirm CSV Import</h5>
+            <p>The following bookmarks will be imported. Existing bookmarks with the same URL will be overwritten.</p>
+
+            <div class="row">
+                <div class="col s12">
+                    <p>
+                        <i class="material-icons left teal-text">note_add</i><b>New: <span id="import-new-count">0</span>items</b>
+                    </p>
+                    <ul id="import-new-list" class="collection preview-list">
+                        </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12">
+                    <p>
+                        <i class="material-icons left orange-text">edit</i><b>Update: <span id="import-update-count">0</span>items</b>
+                    </p>
+                    <ul id="import-update-list" class="collection preview-list">
+                        </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12">
+                    <p>
+                        <i class="material-icons left grey-text">skip_next</i><b>skipped: <span id="import-skipped-count">0</span>items (invalid title or URL)</b>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="right-align">
+                <button id="execute-import-btn" class="waves-effect waves-light btn green darken-1"><i class="material-icons right">check</i>Import</button>
+                <button id="cancel-import-btn" class="waves-effect waves-light btn red lighten-1"><i class="material-icons right">close</i>Cancel</button>
+            </div>
+        </div>
+        </div>
+
+    <script src="statics/js/materialize.min.js"></script>
+    <script src="statics/js/constants.js"></script> 
+    <script src="statics/js/csv_export.js"></script>
+    <script src="statics/js/csv_import.js"></script>
+    <script src="statics/js/list.js"></script>
+</body>
+</html>
