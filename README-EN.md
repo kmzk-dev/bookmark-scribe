@@ -63,9 +63,9 @@ Shared constants are centralized in `statics/js/constants.js` to ensure code mai
 This section explains how to get started.
 
 ### Installation
-Bookmark Scribe is available for free on the Chrome Web Store.
-Click the URL below or copy and paste it into your address bar to visit the store.
-[Download on the Chrome Web Store]()
+~~Bookmark Scribe is available for free on the Chrome Web Store.~~
+~~Click the URL below or copy and paste it into your address bar to visit the store.~~
+~~[Download on the Chrome Web Store]()~~
 
 ### Tutorial
 Once installed, let's try bookmarking [Browse Fonts - Google Fonts](https://fonts.google.com). Fonts are a key element in creating polished web designs, but you probably don't visit this site every day. Adding links like this can clutter your bookmark bar, which can be a hidden source of stress. Let Bookmark Scribe help reduce that stress.
