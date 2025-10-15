@@ -1,5 +1,5 @@
 # Bookmark Scribe
-[English Speaker refure README-EN.md](/exclude/README-EN.md)
+[English Speaker refure README-EN.md](README-EN.md)
 Bookmark Scribe は、**頻繁には使わないが時々参照が必要な開発リソース（APIリファレンス、デザインツールなど）** や、**「タイトルだけでは中身がわからない」リンク** を効果的に管理するための Google Chrome 拡張機能です。標準のブラウザブックマークからこれらのリンクを分離し、コンテキストを付加することで、必要な時にすぐに情報を見つけ出せるように設計されています。
 
 ## 拡張機能の目的とコンセプト

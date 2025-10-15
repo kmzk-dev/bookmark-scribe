@@ -47,7 +47,7 @@ Bookmark Scribe solves this by separating those links from your main bookmarks, 
 "Happy Hues","[https://example.com](https://example.com)","A collection of color palette templates. Used for reference when creating CSS."
 ```
 This sample is in csv dir.
-<img src="/exclude/img/reamme-sample-001.png">
+<img src="/exclude/img/readme-sample-001.png">
 
 **Label Handling:** The import function automatically creates and assigns an Import label. This allows you to filter for imported data using Filter by label. After editing the labels for all imported items, you can safely delete the Import label if it is no longer needed.
 
