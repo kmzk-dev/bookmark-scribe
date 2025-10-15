@@ -1,0 +1,18 @@
+{
+    "manifest_version": 3,
+    "name": "Bookmark Scribe",
+    "version": "1.0",
+    "description": "Manage bookmarks by adding comments and labels.",
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "background": {
+        "service_worker": "statics/js/background.js"
+    },
+    "permissions": [       
+        "storage",          
+        "activeTab",
+        "contextMenus"         
+    ],
+    "options_page": "options.html"
+}

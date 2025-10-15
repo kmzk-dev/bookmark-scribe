@@ -9,7 +9,6 @@
         .container { padding-bottom: 50px; }
         .category-item { display: flex; align-items: center; justify-content: space-between; padding: 5px 0; border-bottom: 1px dotted #ccc; }
         .category-item button { margin-left: 8px; }
-        /* モーダルを中央に表示 */
         #edit-modal { 
             display: none; 
             padding: 20px; 
@@ -27,13 +26,13 @@
 </head>
 <body>
     <div class="container">
-        <h4 class="center-align">Setting</h4>
+        <h4 class="center-align">Bookmark Scribe - Settings</h4>
         
         <div class="row">
             <div class="col s12">
                 <h5>Label</h5>
                 <div class="input-field">
-                    <input type="text" id="new-category-input" class="validate">
+                    <input type="text" id="new-category-input" class="validate" maxlength="20" data-length="20">
                     <label for="new-category-input">New Label Name</label>
                 </div>
                 <button id="add-category-btn" class="waves-effect waves-light btn right"><i class="material-icons left">add</i>add</button>
@@ -45,7 +44,7 @@
             <div class="col s12">
                 <h5>Label List</h5>
                 <ul id="category-list" class="collection">
-                    <li class="collection-item">カテゴリを読み込み中です...</li>
+                    <li class="collection-item">Loading labels...</li>
                 </ul>
             </div>
         </div>
@@ -53,7 +52,7 @@
         <div id="edit-modal">
             <h6>Edit Label</h6>
             <div class="input-field">
-                <input type="text" id="edit-category-input" class="validate">
+                <input type="text" id="edit-category-input" class="validate" maxlength="20" data-length="20">
                 <label for="edit-category-input">New Label Name</label>
             </div>
             <button id="save-category-edit-btn" class="waves-effect waves-light btn">Edit</button>

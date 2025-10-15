@@ -1,6 +1,5 @@
 // csv_import.js
 
-
 /**
  * CSV文字列をパースし、ブックマークデータオブジェクトの配列に変換する
  * @param {string} csvText - 読み込まれたCSVファイルの内容
@@ -61,54 +60,63 @@ function parseCsv(csvText) {
 }
 
 /**
- * CSVインポート処理全体を統括し、ストレージに保存する
+ * CSVデータと既存のブックマークを比較し、プレビュー用のデータを生成する
  * @param {string} csvText - CSVファイルの内容
- * @param {Object} categoryMap - カテゴリIDと名前のマップ
+ * @returns {Object} { newData: Array, updateData: Array, skippedCount: number }
  */
-async function importCsvData(csvText, categoryMap) {
-    const { data: importData, skipped: skippedInitial } = parseCsv(csvText);
-    
-    if (importData.length === 0) {
-        alert('有効なブックマークデータが見つかりませんでした。');
-        return;
-    }
+async function generateImportPreview(csvText) {
+    const { data: importData, skipped: skippedCount } = parseCsv(csvText);
+    const result = await chrome.storage.local.get(BOOKMARKS_STORAGE_KEY);
+    const allBookmarks = result[BOOKMARKS_STORAGE_KEY] || {};
 
+    const newData = [];
+    const updateData = [];
+
+    importData.forEach(item => {
+        if (allBookmarks[item.url]) {
+            updateData.push(item);
+        } else {
+            newData.push(item);
+        }
+    });
+
+    return { newData, updateData, skippedCount };
+}
+/**
+ * プレビューされたデータに基づいて、ストレージにブックマークを保存する
+ */
+async function executeImport(newData, updateData, categoryMap) {
     let savedCount = 0;
     let categoryIdToUse = '';
     
-    // 1. カテゴリIDの特定: "Import"カテゴリがなければ新規作成
     const existingImportCategory = Object.keys(categoryMap).find(id => categoryMap[id] === IMPORT_CATEGORY_NAME);
 
     if (existingImportCategory) {
         categoryIdToUse = existingImportCategory;
     } else {
-        // 新規カテゴリの作成（ここではカテゴリIDのみ生成し、list.js側でリストに追加する必要がある）
-        // 簡素化のため、一時的なIDを使用し、ロード時にカテゴリが存在しない場合は '未分類' にフォールバックする
         categoryIdToUse = 'cat_' + Date.now();
+        const categoriesResult = await chrome.storage.local.get(CATEGORIES_STORAGE_KEY);
+        const categories = categoriesResult[CATEGORIES_STORAGE_KEY] || [];
+        categories.push({ id: categoryIdToUse, name: IMPORT_CATEGORY_NAME });
+        await chrome.storage.local.set({ [CATEGORIES_STORAGE_KEY]: categories });
     }
     
-    // 2. 既存のブックマークデータを読み込み
     const result = await chrome.storage.local.get(BOOKMARKS_STORAGE_KEY);
     const allBookmarks = result[BOOKMARKS_STORAGE_KEY] || {};
 
-    // 3. データの上書き処理
+    const importData = [...newData, ...updateData];
     importData.forEach(item => {
-        // URLをキーとして上書き
         allBookmarks[item.url] = {
             title: item.title,
             url: item.url,
             summary: item.summary,
-            categoryId: categoryIdToUse, // 固定カテゴリIDを割り当て
-            lastUpdated: item.lastUpdated
+            categoryId: categoryIdToUse,
+            lastUpdated: new Date().toISOString()
         };
         savedCount++;
     });
 
-    // 4. ストレージに保存
     await chrome.storage.local.set({ [BOOKMARKS_STORAGE_KEY]: allBookmarks });
-
-    alert(`CSVインポートが完了しました。\n\n- 成功件数: ${savedCount}件 (既存データを上書き)\n- スキップ件数: ${skippedInitial}件 (タイトルまたはURL不足)`);
     
-    // リストの再読み込みを促す
-    location.reload(); 
+    return savedCount;
 }
